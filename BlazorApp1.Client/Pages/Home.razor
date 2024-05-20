@@ -1,0 +1,56 @@
+﻿@page "/"
+@using BlazorApp1.Client.Layout
+@using System.Collections.Generic
+
+
+<PageTitle>@PageTitle</PageTitle>
+<h1 hidden>@PageTitle</h1>
+
+<TopNavComponent PageTitle="@PageTitle" />
+
+
+<div id="content" class="">
+    <div id="playlists" class="p-2 p-md-4 w-100 mx-auto">
+        @foreach (var playlist in Playlists)
+        {
+            <a id="playlist" class="rounded-4 text-black w-100" href="/playlist">
+                <img src="@playlist.Image" alt="@playlist.Name" class="img-fluid rounded-2 w-100" />
+                <h2 class="fw-bold fs-5 my-2">@playlist.Name</h2>
+                <p class="fw-semibold my-0">@playlist.Description</p>
+            </a>
+        }
+    </div>
+</div>
+
+
+@code {
+    public string PageTitle { get; set; } = "All Playlists";
+
+    // the playlist list will be here, just for testing, they are arrays of objects with the following properties:
+    // - Id: int
+    // - Name: string
+    // - Description: string
+    // - Image: string
+    // The playlist object definition
+    private class Playlist
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Image { get; set; }
+    }
+
+    private List<Playlist> Playlists { get; set; } = new List<Playlist>
+    {
+        new Playlist { Id = 1, Name = "Playlist 1", Description = "Description 1", Image = "https://via.placeholder.com/150" },
+        new Playlist { Id = 2, Name = "Playlist 2", Description = "Description 2", Image = "https://via.placeholder.com/150" },
+        new Playlist { Id = 3, Name = "Playlist 3", Description = "Description 3", Image = "https://via.placeholder.com/150" },
+        new Playlist { Id = 4, Name = "Playlist 4", Description = "Description 4", Image = "https://via.placeholder.com/150" },
+        new Playlist { Id = 5, Name = "Playlist 5", Description = "Description 5", Image = "https://via.placeholder.com/150" },
+        new Playlist { Id = 6, Name = "Playlist 6", Description = "Description 6", Image = "https://via.placeholder.com/150" },
+        new Playlist { Id = 7, Name = "Playlist 7", Description = "Description 7", Image = "https://via.placeholder.com/150" },
+        new Playlist { Id = 8, Name = "Playlist 8", Description = "Description 8", Image = "https://via.placeholder.com/150" },
+        new Playlist { Id = 9, Name = "Playlist 9", Description = "Description 9", Image = "https://via.placeholder.com/150" },
+        new Playlist { Id = 10, Name = "Playlist 10", Description = "Description 10", Image = "https://via.placeholder.com/150" }
+    };
+}

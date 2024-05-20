@@ -1,0 +1,21 @@
+﻿#playlist {
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+
+}
+
+.playlist-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    justify-content: space-between;
+    gap: 20px;
+    height: 80px;
+    
+}
+
+#playlist-title-section {
+    flex-grow: 1;
+}

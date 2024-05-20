@@ -1,0 +1,36 @@
+﻿
+
+<nav id="navbar" class="p-3">
+    <form class="" id="top-navigation-search">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search..." aria-label="search-resources" aria-describedby="top-search-bar">
+            <button class="btn btn-outline-secondary" type="button" id="top-search-bar">Search</button>
+        </div>
+    </form>
+
+    <div class="text-center py-2" id="top-navigation-config-back">
+        
+        <button>
+            <a href="/">
+                <i class="bi bi-chevron-left icon"></i>
+            </a>
+        </button>
+        <span id="page-title" class="fw-bolder fs-4">@PageTitle</span>
+        <div class="">
+            <button>
+                <a href="#">
+                    <i class="bi bi-list icon"></i>
+                </a>
+            </button>
+        </div>
+    </div>
+</nav>
+
+@code {
+    // Initiate the page title which is received from the parent component, it receives the page title as a parameter string
+    
+    [Parameter]
+    public string PageTitle { get; set; }
+
+
+}

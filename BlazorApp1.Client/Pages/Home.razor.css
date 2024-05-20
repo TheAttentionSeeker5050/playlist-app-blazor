@@ -1,0 +1,23 @@
+﻿#playlist {
+    max-width: 220px;
+}
+
+#playlists {
+    max-width: 1000px !important;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-gap: 20px;
+
+}
+
+@media (max-width: 900px) {
+    #playlist {
+        max-width: 100%;
+    }
+
+    #playlists {
+        grid-gap: 30px;
+        padding: 0 !important;
+        margin: 0;
+    }
+}
