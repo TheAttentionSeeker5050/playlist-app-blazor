@@ -4,43 +4,44 @@
 
 namespace BlazorApp1.Api.Controller
 {
-    [Route("api/playlists")]
+    [Route("api/songs")]
     [ApiController]
-    public class Playlists : ControllerBase
+    public class SongsController : ControllerBase
     {
+
         private readonly IWebHostEnvironment environment;
-        public Playlists(IWebHostEnvironment environment)
+        public SongsController(IWebHostEnvironment environment)
         {
             this.environment = environment;
         }
 
-        // GET: api/playlists
-        [HttpGet()]
+        // GET: api/songs
+        [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "playlist1", "playlist2" };
+            return new string[] { "song1", "song2" };
         }
 
-        // GET api/playlists/5
+        // GET api/songs/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            return "playlist";
+            return "song";
         }
 
-        // POST api/playlists
-        [HttpPost()]
+        // POST api/songs
+        [HttpPost]
         public void Post([FromBody] string value)
         {
         }
 
-        // PUT api/playlists/5
+        // PUT api/songs/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/playlists/5
+        // DELETE api/songs/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
