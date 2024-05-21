@@ -6,11 +6,11 @@ namespace BlazorApp1.Api.Controller
 {
     [Route("api/songs")]
     [ApiController]
-    public class Songs : ControllerBase
+    public class SongsController : ControllerBase
     {
 
         private readonly IWebHostEnvironment environment;
-        public Songs(IWebHostEnvironment environment)
+        public SongsController(IWebHostEnvironment environment)
         {
             this.environment = environment;
         }

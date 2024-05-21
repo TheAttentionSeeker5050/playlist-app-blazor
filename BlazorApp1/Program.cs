@@ -17,18 +17,20 @@ builder.Services.AddControllers();
 
 // Add api services in /Api/Controller in all the controllers inside the BlazorApp1.Api.Controller folder
 builder.Services.AddMvc()
-    .AddApplicationPart(typeof(BlazorApp1.Api.Controller.Playlists).Assembly)
-    .AddApplicationPart(typeof(BlazorApp1.Api.Controller.Songs).Assembly)
+    .AddApplicationPart(typeof(BlazorApp1.Api.Controller.PlaylistsController).Assembly)
+    .AddApplicationPart(typeof(BlazorApp1.Api.Controller.SongsController).Assembly)
     
     ;
 
-// Add http client services for using the WebAPI in blazor components
+builder.Services.AddHttpClient();
+
+/*// Add http client services for using the WebAPI in blazor components
 builder.Services.AddHttpClient("WebAPI",
 client => client.BaseAddress = new Uri(builder.Configuration["BaseAddress"]));
 
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
     .CreateClient("WebAPI"));
-
+*/
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();

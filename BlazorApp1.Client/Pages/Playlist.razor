@@ -1,6 +1,11 @@
 ﻿@page "/playlist"
 @using BlazorApp1.Client.Layout
 @using System.Collections.Generic
+@using System.Net.Http
+@inject HttpClient Http
+@using System.Net.Http.Json
+@inject NavigationManager NavigationManager
+
 
 
 <PageTitle>@PageTitle</PageTitle>
@@ -10,24 +15,30 @@
 
 <div id="content" class="container mx-auto p-3 p-md-5">
     <div id="playlist">
-        @foreach (var song in Songs)
+        @if (Response?.PlaylistMetadata == null || Response?.PlaylistSongs == null)
         {
-            <div class="playlist-item g-3">
-                <img src="@song.Image" alt="@song.Name" class="rounded-2 h-100" />
-                <a class="text-black" id="playlist-title-section" href="/player">
-                    <h2 class="fw-bold fs-4" id="playlist-title">
-                        @song.Name
-                    </h2>
-                    <h3 class="fw-bold fs-6 " id="playlist-title">
-                        @song.Artist
-                    </h3>
-                </a>
-                <div class="">
-                    <button class="btn-transparent-bg-border">
-                        <img src="/icons/play-circle.svg" class="" width="25" height="25" />
-                    </button>
+            <h2 class="fw-bold fs-4">Playlist not found</h2>
+
+        } else {
+            @foreach (var song in Response.PlaylistSongs)
+            {
+                <div class="playlist-item g-3">
+                    <img src="@song.Image" alt="@song.Name" class="rounded-2 h-100" />
+                    <a class="text-black" id="playlist-title-section" href="/player">
+                        <h2 class="fw-bold fs-4" id="playlist-title">
+                            @song.Name
+                        </h2>
+                        <h3 class="fw-bold fs-6 " id="playlist-title">
+                            @song.Artist
+                        </h3>
+                    </a>
+                    <div class="">
+                        <button class="btn-transparent-bg-border">
+                            <img src="/icons/play-circle.svg" class="" width="25" height="25" />
+                        </button>
+                    </div>
                 </div>
-            </div>
+            }
         }
     </div>
 </div>
@@ -60,37 +71,43 @@
         public string Image { get; set; }
     }
 
-
-    // Start the playlist object with values
-    private PlaylistObj playlistObj { get; set; } = new PlaylistObj { Id = 1, Name = "Playlist 1", Description = "Description 1", Image = "https://via.placeholder.com/150" };
-
-    // Create a list of songs
-    private List<Song> Songs { get; set; } = new List<Song>
+    private class PlaylistResponseData
     {
-        new Song { Id = 1, Name = "Song 1", Artist = "Artist 1", Image = "https://via.placeholder.com/150" },
-        new Song { Id = 2, Name = "Song 2", Artist = "Artist 2", Image = "https://via.placeholder.com/150" },
-        new Song { Id = 3, Name = "Song 3", Artist = "Artist 3", Image = "https://via.placeholder.com/150" },
-        new Song { Id = 4, Name = "Song 4", Artist = "Artist 4", Image = "https://via.placeholder.com/150" },
-        new Song { Id = 5, Name = "Song 5", Artist = "Artist 5", Image = "https://via.placeholder.com/150" },
-        new Song { Id = 6, Name = "Song 6", Artist = "Artist 6", Image = "https://via.placeholder.com/150" },
-        new Song { Id = 7, Name = "Song 7", Artist = "Artist 7", Image = "https://via.placeholder.com/150" },
-        new Song { Id = 8, Name = "Song 8", Artist = "Artist 8", Image = "https://via.placeholder.com/150" },
-        new Song { Id = 9, Name = "Song 9", Artist = "Artist 9", Image = "https://via.placeholder.com/150" },
-        new Song { Id = 10, Name = "Song 10", Artist = "Artist 10", Image = "https://via.placeholder.com/150" }
-    };
-
-
+        public PlaylistObj PlaylistMetadata { get; set; } = new PlaylistObj();
+        public List<Song> PlaylistSongs { get; set; } = new List<Song>();
+    }
 
     private string PageTitle { get; set; } = "Playlist: ";
 
-    // Initialize the page title variable
-    protected override void OnInitialized()
+
+    private PlaylistResponseData Response = new PlaylistResponseData();
+
+
+    // The http client  object
+    protected override async Task OnInitializedAsync()
     {
-        PageTitle = "Playlist: " + playlistObj.Name;
-    }
+        try
+        {
+            // Use navigation manager to get the base url address of the http client
+            var baseUri = NavigationManager.BaseUri;
 
+            // Use the base address of the http client to get the playlists
+            Response = await Http.GetFromJsonAsync<PlaylistResponseData>(baseUri + "api/playlists/1");
 
-    
-
+            if (Response?.PlaylistMetadata != null)
+            {
+                PageTitle = "Playlist: " + Response.PlaylistMetadata.Name;
+            }
+            else
+            {
+                PageTitle = "Playlist not found";
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle the error appropriately here (log it, show a message to the user, etc.)
+            PageTitle = "Error loading playlist";
+        }
+    } 
 
 }
