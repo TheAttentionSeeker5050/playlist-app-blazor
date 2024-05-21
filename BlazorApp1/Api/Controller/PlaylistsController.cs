@@ -28,11 +28,6 @@ namespace BlazorApp1.Api.Controller
         }
 
         // GET api/playlists/5
-        // the response is composed of the following json object:
-        // {
-        //     "playlistMetadata": {PlaylistModel}
-        //     "playlistSongs": {List<TrackModel>}
-        // }
         [HttpGet("{id}")]
         public string Get(int id)
         {
