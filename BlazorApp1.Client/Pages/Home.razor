@@ -19,7 +19,7 @@
     <div id="playlists" class="p-2 p-md-4 w-100 mx-auto">
         @foreach (var playlist in Response)
         {
-            <a id="playlist" class="rounded-4 text-black w-100" href="/playlist">
+            <a id="playlist" class="rounded-4 text-black w-100" href="/playlist/@playlist.Id">
                 <img src="@playlist.Image" alt="@playlist.Name" class="img-fluid rounded-2 w-100" />
                 <h2 class="fw-bold fs-5 my-2">@playlist.Name</h2>
                 <p class="fw-semibold my-0">@playlist.Description</p>

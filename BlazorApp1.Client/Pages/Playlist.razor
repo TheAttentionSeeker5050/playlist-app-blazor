@@ -1,4 +1,4 @@
-﻿@page "/playlist"
+﻿@page "/playlist/{id}"
 @using BlazorApp1.Client.Layout
 @using System.Collections.Generic
 @using System.Net.Http
@@ -24,7 +24,7 @@
             {
                 <div class="playlist-item g-3">
                     <img src="@song.Image" alt="@song.Name" class="rounded-2 h-100" />
-                    <a class="text-black" id="playlist-title-section" href="/player">
+                    <a class="text-black" id="playlist-title-section" href="/player/@song.Id">
                         <h2 class="fw-bold fs-4" id="playlist-title">
                             @song.Name
                         </h2>
@@ -46,7 +46,8 @@
 
 
 @code {
-
+    [Parameter]
+    public string Id { get; set; }
 
     // the playlist will be here, just for testing, they are arrays of objects with the following properties:
     // - Id: int
@@ -92,7 +93,7 @@
             var baseUri = NavigationManager.BaseUri;
 
             // Use the base address of the http client to get the playlists
-            Response = await Http.GetFromJsonAsync<PlaylistResponseData>(baseUri + "api/playlists/1");
+            Response = await Http.GetFromJsonAsync<PlaylistResponseData>(baseUri + "api/playlists/" + Id);
 
             if (Response?.PlaylistMetadata != null)
             {

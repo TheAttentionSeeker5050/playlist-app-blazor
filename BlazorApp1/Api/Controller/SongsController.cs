@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BlazorApp1.Api.Model;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,7 +28,9 @@ namespace BlazorApp1.Api.Controller
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            return "song";
+            var song = SongModel.GetSongs().FirstOrDefault(s => s.Id == id);
+
+            return JsonConvert.SerializeObject(song);
         }
 
         // POST api/songs

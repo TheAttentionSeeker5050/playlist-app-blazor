@@ -1,6 +1,10 @@
-﻿@page "/player"
+﻿@page "/player/{id}"
 @using BlazorApp1.Client.Layout
 @using System.Collections.Generic
+@using System.Net.Http
+@inject HttpClient Http
+@using System.Net.Http.Json
+@inject NavigationManager NavigationManager
 
 
 <PageTitle>@PageTitle</PageTitle>
@@ -10,9 +14,9 @@
 
 <div id="content" class="container mx-auto p-md-5 px-4 px-sm-0">
     <div id="player" class="col">
-        <img src="@song.Image" alt="@song.Name" id="player-image" class="" />
+        <img src="@Response.Image" alt="@Response.Name" id="player-image" class="" />
         <h2 class="fw-bold fs-4 px-0" id="song-title">
-            <span>@song.Name</span>
+            <span>@Response.Name</span>
             <i class="bi bi-explicit icon"></i>
             
             <button class="btn-transparent-bg-border">
@@ -20,7 +24,7 @@
             </button>
         </h2>
         
-        <p class="row w-100 mx-auto fw-semibold" id="song-artist">@song.Artist</p>
+        <p class="row w-100 mx-auto fw-semibold" id="song-artist">@Response.Artist</p>
         <div id="progress-bar-wrapper" class="">
             <span class="fs-5">1:34</span>
 
@@ -52,6 +56,8 @@
 
 
 @code {
+    [Parameter]
+    public string Id { get; set; }
 
     // The playlist object definition
     private class Song
@@ -62,13 +68,37 @@
         public string Image { get; set; }
     }
 
-    private Song song = new Song { Id = 1, Name = "Song 1", Artist = "Artist 1", Image = "https://via.placeholder.com/150" };
+    // private Song song = new Song { Id = 1, Name = "Song 1", Artist = "Artist 1", Image = "https://via.placeholder.com/150" };
     
     private string PageTitle { get; set; } = "Now Playing:";
 
-    // Initialize the page title variable
-    protected override void OnInitialized()
+    private Song Response = new Song();
+
+
+    // The http client  object
+    protected override async Task OnInitializedAsync()
     {
-        PageTitle = "Now Playing: " + song.Name;
+        try
+        {
+            // Use navigation manager to get the base url address of the http client
+            var baseUri = NavigationManager.BaseUri;
+
+            // Use the base address of the http client to get the playlists
+            Response = await Http.GetFromJsonAsync<Song>(baseUri + "api/songs/" + Id);
+
+            if (Response != null)
+            {
+                PageTitle = "Now Playing: " + Response.Name;
+            }
+            else
+            {
+                PageTitle = "Song not found";
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle the error appropriately here (log it, show a message to the user, etc.)
+            PageTitle = "Error loading Song";
+        }
     }
 }
