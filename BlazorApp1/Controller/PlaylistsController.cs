@@ -1,16 +1,16 @@
-﻿using BlazorApp1.Api.Model;
+﻿using BlazorApp1.Model;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace BlazorApp1.Api.Controller
+namespace BlazorApp1.Controller
 {
     [Route("api/playlists")]
     [ApiController]
     public class PlaylistsController : ControllerBase
     {
-        
+
 
         private readonly IWebHostEnvironment environment;
         public PlaylistsController(IWebHostEnvironment environment)
@@ -20,9 +20,9 @@ namespace BlazorApp1.Api.Controller
 
         // GET: api/playlists
         [HttpGet]
-        public IEnumerable<PlaylistModel> Get() 
+        public IEnumerable<PlaylistModel> Get()
         {
-            var playlists =  PlaylistModel.GetPlaylists();
+            var playlists = PlaylistModel.GetPlaylists();
 
             return playlists;
         }
@@ -35,7 +35,7 @@ namespace BlazorApp1.Api.Controller
             var playlistSongs = SongModel.GetSongs().ToList();
 
             // prepare the response object
-            
+
             return JsonConvert.SerializeObject(new
             {
                 playlistMetadata,

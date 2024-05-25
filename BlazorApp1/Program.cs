@@ -1,10 +1,13 @@
 using BlazorApp1.Client.Pages;
 using BlazorApp1.Components;
 using BlazorApp1.Components.Account;
+using BlazorApp1.Controller;
 using BlazorApp1.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,22 +20,16 @@ builder.Services.AddControllers();
 
 // Add api services in /Api/Controller in all the controllers inside the BlazorApp1.Api.Controller folder
 builder.Services.AddMvc()
-    .AddApplicationPart(typeof(BlazorApp1.Api.Controller.PlaylistsController).Assembly)
-    .AddApplicationPart(typeof(BlazorApp1.Api.Controller.SongsController).Assembly)
+    .AddApplicationPart(typeof(PlaylistsController).Assembly)
+    .AddApplicationPart(typeof(SongsController).Assembly)
     
     ;
 
 builder.Services.AddHttpClient();
 
-/*// Add http client services for using the WebAPI in blazor components
-builder.Services.AddHttpClient("WebAPI",
-client => client.BaseAddress = new Uri(builder.Configuration["BaseAddress"]));
 
-builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
-    .CreateClient("WebAPI"));
-*/
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<IdentityUserAccessor>();
+// builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
 
@@ -53,15 +50,24 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
+
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 var app = builder.Build();
 
 app.MapControllers();
 
+
+    // If the database doesnt exist create it and seed it with data using CreateHostBuilder
+    var host = app.Services.GetRequiredService<IHost>();
+
+    // now create the database and seed it with data
+    CreateDBIfNotExists(host);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+
     app.UseWebAssemblyDebugging();
     app.UseMigrationsEndPoint();
 }
@@ -70,6 +76,27 @@ else
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+
+// create a function called CreateDBIfNotExists that will create the database if it does not exist
+// this function will be called in the CreateHostBuilder function
+static void CreateDBIfNotExists(IHost host)
+{
+    using (var scope = host.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            var context = services.GetRequiredService<ApplicationDbContext>();
+            context.Database.EnsureCreated();
+            DBInitializer.Initialize(context);
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred creating the DB.");
+        }
+    }
 }
 
 app.UseHttpsRedirection();

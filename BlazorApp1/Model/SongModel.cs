@@ -1,4 +1,8 @@
-﻿namespace BlazorApp1.Api.Model
+﻿using System;
+using System.Collections.Generic;
+using BlazorApp1.Model;
+
+namespace BlazorApp1.Model
 {
     public class SongModel
     {
@@ -6,7 +10,12 @@
         public string Name { get; set; }
         public string Artist { get; set; }
         public string Image { get; set; }
- 
+
+        // Add a collection of playlist items to the playlist model
+        public ICollection<PlaylistItem> PlaylistItems { get; set; }
+
+        
+
         // Return a dummy list of songs
         public static List<SongModel> GetSongs()
         {

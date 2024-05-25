@@ -1,10 +1,10 @@
-﻿using BlazorApp1.Api.Model;
+﻿using BlazorApp1.Model;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace BlazorApp1.Api.Controller
+namespace BlazorApp1.Controller
 {
     [Route("api/songs")]
     [ApiController]
@@ -32,6 +32,8 @@ namespace BlazorApp1.Api.Controller
 
             return JsonConvert.SerializeObject(song);
         }
+        
+        // TestController
 
         // POST api/songs
         [HttpPost]
