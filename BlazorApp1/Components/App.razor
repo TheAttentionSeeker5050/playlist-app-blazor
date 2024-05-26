@@ -16,6 +16,39 @@
 <body>
     <Routes @rendermode="RenderModeForPage" />
     <script src="_framework/blazor.web.js"></script>
+    
+    @* make a frontend script to play the music *@
+    <script>
+
+        // Play the music method
+        window.PlayMusicFile = function (src) {
+            var audio = document.getElementById("audio-player");
+            if (audio != null) {
+                var audioSource = document.getElementById('player-source');
+                if (audioSource != null) {
+                    audioSource.src = src;
+                    audio.load();
+                    audio.play();
+                }
+            }
+        }
+
+        // Resume the music method
+        window.ResumeMusicFile = function () {
+            var audio = document.getElementById("audio-player");
+            if (audio != null) {
+                audio.play();
+            }
+        }
+
+        // Pause the music method
+        window.PauseMusicFile = function () {
+            var audio = document.getElementById("audio-player");
+            if (audio != null) {
+                audio.pause();
+            }
+        }
+    </script>
 </body>
 
 </html>

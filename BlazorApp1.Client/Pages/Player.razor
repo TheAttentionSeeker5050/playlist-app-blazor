@@ -5,6 +5,7 @@
 @inject HttpClient Http
 @using System.Net.Http.Json
 @inject NavigationManager NavigationManager
+@inject IJSRuntime js;
 
 
 <PageTitle>@PageTitle</PageTitle>
@@ -41,9 +42,19 @@
             <button class="btn-transparent-bg-border">
                 <i class="bi bi-skip-start icon"></i>
             </button>
-            <button class="btn-transparent-bg-border">
-                <i class="bi bi-play-circle icon"></i>
-            </button>
+            @* if is playing, display pause button, otherwise display play button *@
+            @if (IsPlaying)
+            {
+                <button class="btn-transparent-bg-border" @onclick="PauseSong">
+                    <i class="bi bi-pause-circle icon"></i>
+                </button>
+            }
+            else
+            {
+                <button class="btn-transparent-bg-border" @onclick="ResumeSong">
+                    <i class="bi bi-play-circle icon"></i>
+                </button>
+            }
             <button class="btn-transparent-bg-border">
                 <i class="bi bi-skip-end icon"></i>
             </button>
@@ -51,7 +62,16 @@
                 <i class="bi bi-shuffle icon"></i>
             </button>
         </div>
+
+        @* Now we will create an audio html element *@
+        <audio id="audio-player">
+            <source id="player-source">
+            Your browser does not support the audio element.
+        </audio>
     </div>
+
+
+    
 </div>
 
 
@@ -74,6 +94,9 @@
 
     private Song Response = new Song();
 
+    // a property that states if music is playing
+    private bool IsPlaying { get; set; } = false;
+
 
     // The http client  object
     protected override async Task OnInitializedAsync()
@@ -94,11 +117,60 @@
             {
                 PageTitle = "Song not found";
             }
+
+            // auto play the song
+            await PlaySong();
         }
         catch (Exception ex)
         {
             // Handle the error appropriately here (log it, show a message to the user, etc.)
             PageTitle = "Error loading Song";
         }
+    }
+
+    // The method to play the song
+    async Task PlaySong()
+    {
+        IsPlaying = true;
+        await js.InvokeVoidAsync("PlayMusicFile", "media/some-random-song.mp3");
+    }
+
+
+    // The method to pause the song
+    async Task PauseSong()
+    {
+        IsPlaying = false;
+        await js.InvokeVoidAsync("PauseMusicFile");
+    }
+
+    // The method to resume the song
+    async Task ResumeSong()
+    {
+        IsPlaying = true;
+        await js.InvokeVoidAsync("ResumeMusicFile");
+    }
+
+    // The method to skip forward the song
+    async Task SkipForward()
+    {
+        await js.InvokeVoidAsync("SkipForwardMusicFile");
+    }
+
+    // The method to skip backward the song
+    async Task SkipBackward()
+    {
+        await js.InvokeVoidAsync("SkipBackwardMusicFile");
+    }
+
+    // The method to shuffle the playlist
+    async Task ShufflePlaylist()
+    {
+        await js.InvokeVoidAsync("ShufflePlaylistJs");
+    }
+
+    // The method to repeat the playlist
+    async Task RepeatPlaylist()
+    {
+        await js.InvokeVoidAsync("RepeatPlaylistJs");
     }
 }
