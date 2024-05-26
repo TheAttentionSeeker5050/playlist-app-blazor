@@ -58,11 +58,11 @@ var app = builder.Build();
 app.MapControllers();
 
 
-    // If the database doesnt exist create it and seed it with data using CreateHostBuilder
-    var host = app.Services.GetRequiredService<IHost>();
+// If the database doesnt exist create it and seed it with data using CreateHostBuilder
+var host = app.Services.GetRequiredService<IHost>();
 
-    // now create the database and seed it with data
-    CreateDBIfNotExists(host);
+// now create the database and seed it with data
+CreateDBIfNotExists(host);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

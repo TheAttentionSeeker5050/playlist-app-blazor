@@ -1,5 +1,8 @@
-﻿using BlazorApp1.Model;
+﻿using BlazorApp1.Data;
+using BlazorApp1.DTOs;
+using BlazorApp1.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,37 +14,55 @@ namespace BlazorApp1.Controller
     public class PlaylistsController : ControllerBase
     {
 
+        private readonly ApplicationDbContext _context;
 
         private readonly IWebHostEnvironment environment;
-        public PlaylistsController(IWebHostEnvironment environment)
+        public PlaylistsController(IWebHostEnvironment environment, ApplicationDbContext context)
         {
+            _context = context;
             this.environment = environment;
         }
 
         // GET: api/playlists
         [HttpGet]
-        public IEnumerable<PlaylistModel> Get()
+        public async Task<ActionResult<IEnumerable<PlaylistModel>>> GetPlaylists()
         {
-            var playlists = PlaylistModel.GetPlaylists();
-
-            return playlists;
+            return await _context.Playlists.ToListAsync();
         }
 
-        // GET api/playlists/5
+        // GET: api/playlists/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<PlaylistDetailsDto>> GetPlaylist(int id)
         {
-            var playlistMetadata = PlaylistModel.GetPlaylists().FirstOrDefault(p => p.Id == id);
-            var playlistSongs = SongModel.GetSongs().ToList();
+            var playlist = await _context.Playlists
+                .Include(p => p.PlaylistItems)
+                    .ThenInclude(pi => pi.SongModel)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
-            // prepare the response object
-
-            return JsonConvert.SerializeObject(new
+            if (playlist == null)
             {
-                playlistMetadata,
-                playlistSongs
-            });
+                return NotFound();
+            }
 
+            var playlistDetailsDto = new PlaylistDetailsDto
+            {
+                PlaylistMetadata = new PlaylistMetadataDto
+                {
+                    Id = playlist.Id,
+                    Name = playlist.Name,
+                    Description = playlist.Description,
+                    Image = playlist.Image
+                },
+                PlaylistSongs = playlist.PlaylistItems.Select(pi => new SongDto
+                {
+                    Id = pi.SongModel.Id,
+                    Name = pi.SongModel.Name,
+                    Artist = pi.SongModel.Artist,
+                    Image = pi.SongModel.Image
+                }).ToList()
+            };
+
+            return Ok(playlistDetailsDto);
         }
 
         // POST api/playlists

@@ -10,8 +10,8 @@ namespace BlazorApp1.Model
         public int SongId { get; set; }
 
         // The creation and update date of the playlist item
-        public DateTime Created { get; set; }
-        public DateTime Updated { get; set; }
+        public DateTime Created { get; set; } = DateTime.Now;
+        public DateTime Updated { get; set; } = DateTime.Now;
 
         // Add the reference to the song and playlist model
         public SongModel SongModel { get; set; } = new SongModel();

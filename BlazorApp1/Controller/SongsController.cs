@@ -1,6 +1,10 @@
-﻿using BlazorApp1.Model;
+﻿using BlazorApp1.Data;
+using BlazorApp1.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -10,27 +14,33 @@ namespace BlazorApp1.Controller
     [ApiController]
     public class SongsController : ControllerBase
     {
-
+        private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment environment;
-        public SongsController(IWebHostEnvironment environment)
+        public SongsController(IWebHostEnvironment environment, ApplicationDbContext context)
         {
+            _context = context;
             this.environment = environment;
         }
 
         // GET: api/songs
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<IEnumerable<SongModel>>> GetSongs()
         {
-            return new string[] { "song1", "song2" };
+            return await _context.Songs.ToListAsync();
         }
 
         // GET api/songs/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<SongModel>> GetSong(int id)
         {
-            var song = SongModel.GetSongs().FirstOrDefault(s => s.Id == id);
+            var song = await _context.Songs.FindAsync(id);
 
-            return JsonConvert.SerializeObject(song);
+            if (song == null)
+            {
+                return NotFound();
+            }
+
+            return song;
         }
         
         // TestController
